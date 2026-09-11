@@ -281,16 +281,6 @@ python project4.py
 
 ---
 
-## Interview Talking Points
-
-- Payment delay is the single strongest default signal — P(Default | Delay) = 50% vs 22% baseline
-- Engineered features outperformed raw features — max_delay and delay_count ranked #1 and #2 in XGBoost feature importance despite not existing in the raw dataset
-- Chose Recall over Accuracy as primary metric — with 78:22 imbalance, accuracy is misleading; catching defaulters is the business priority
-- PSI is the standard credit risk drift metric — shows production monitoring awareness beyond just building a model
-- Null A/B result is a valid finding — knowing a cashback offer doesn't move spend saves money on an ineffective promotion
-
----
-
 ## Author
 
 **Kanishk**
