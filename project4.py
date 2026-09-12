@@ -23,15 +23,15 @@ warnings.filterwarnings('ignore')
 df = pd.read_csv(r"D:/Python/creditcard_python_ml/Datasets/UCI_Credit_Card.csv") 
 
 # Sanity checks
-#print(df.shape)
-#print(df.dtypes)
-#print(df.head())
-#print(df.columns.tolist())
-#print(df['PAY_0'].unique())
-#print(df["LIMIT_BAL"].describe())
-#print(df["AGE"].describe())
-#print(df.isnull().sum())
-#print(df.duplicated().sum())
+print(df.shape)
+print(df.dtypes)
+print(df.head())
+print(df.columns.tolist())#
+print(df['PAY_0'].unique())
+print(df["LIMIT_BAL"].describe())
+print(df["AGE"].describe())
+print(df.isnull().sum())
+print(df.duplicated().sum())
 print(df['default.payment.next.month'].value_counts(normalize=True)*100)
 
 # Fixing EDUCATION
@@ -41,8 +41,8 @@ df['EDUCATION'] = df['EDUCATION'].replace({0: 4, 5: 4, 6: 4}) # 0, 5, 6 were und
 df['MARRIAGE'] = df['MARRIAGE'].replace({0: 3}) # 0 was undocumented; treating it as 'Others' (same as 3)
 
 # Verifying the fix
-#print(df['EDUCATION'].value_counts())
-#print(df['MARRIAGE'].value_counts())
+print(df['EDUCATION'].value_counts())
+print(df['MARRIAGE'].value_counts())
 
 # Dropping ID column
 df.drop(columns=['ID'], inplace=True)
@@ -106,6 +106,7 @@ axes[2].tick_params(axis='x', rotation=0)
 
 plt.tight_layout()
 plt.show()
+
 # Gender: Dataset is female-heavy (60:40), 
 # suggesting women were primary credit card adopters in Taiwan 2005.
 
@@ -113,7 +114,6 @@ plt.show()
 # bank's credit approval skews toward educated applicants.
 
 # Marital Status: Single customers slightly outnumber married, 
-# consistent with young-adult heavy age distribution we saw earlier.
 
 # STEP - 2 BIVARIATE ANALYSIS
 
@@ -204,9 +204,7 @@ plt.show()
 # STEP - 3 CORRELATION HEATMAP 
 
 plt.figure(figsize=(16, 12))
-
 corr_matrix = df.corr()
-
 sns.heatmap(corr_matrix,
             annot=True,
             fmt='.2f',
@@ -221,16 +219,14 @@ plt.title('Correlation Heatmap of All Features',
 plt.tight_layout()
 plt.show()
 
-# KEY CORRELATION FINDINGS:
-# 1. PAY_0 strongest predictor of default (r=0.32)
-# 2. LIMIT_BAL negatively correlated with default (r=-0.15)
-#    Higher credit limit → lower default risk
-# 3. BILL_AMTs highly correlated with each other (r=0.92-0.95)
-#    → Multicollinearity issue → will use avg_bill_amt in features
-# 4. PAY columns correlated (r=0.67-0.82)
-#    → Payment behavior is consistent over time
-# 5. AGE and SEX have near-zero correlation with default
-#    → Weak predictors as standalone features
+'''
+KEY CORRELATION FINDINGS:
+1. PAY_0 strongest predictor of default (r=0.32)
+2. LIMIT_BAL negatively correlated with default (r=-0.15) → Higher credit limit → lower default risk
+3. BILL_AMTs highly correlated with each other (r=0.92-0.95) → Multicollinearity issue → will use avg_bill_amt in features
+4. PAY columns correlated (r=0.67-0.82) → Payment behavior is consistent over time
+5. AGE and SEX have near-zero correlation with default → Weak predictors as standalone features
+'''
 
 # P(Default)
 p_default = df['default.payment.next.month'].mean()
@@ -303,17 +299,17 @@ mean_def, lower_def, upper_def = confidence_interval(
 print(f"Default Rate - Mean: {mean_def:.4f} ({mean_def*100:.2f}%)")
 print(f"95% CI: ({lower_def*100:.2f}%, {upper_def*100:.2f}%)")
 
-#Interview: With 30,000 samples, our confidence intervals are very tight — for example, the true default rate lies between 21.65% and 
-#22.59% with 95% confidence. The narrow intervals give us high statistical confidence in our EDA findings before we move to modeling.
+'''
+NoteWith 30,000 samples, our confidence intervals are very tight — for example, the true default rate lies between 21.65% and 
+22.59% with 95% confidence. The narrow intervals give us high statistical confidence in our EDA findings before we move to modeling.
+'''
 
 # ------------------------------- PART- 2 FEATURE ENGINEERING ------------------------------------
 
-# 1. Credit Utilization Ratio
-# How much of their credit limit are they using?
+# 1. Credit Utilization Ratio → How much of their credit limit are they using?
 df['credit_utilization_ratio'] = df['BILL_AMT1'] / df['LIMIT_BAL']
 
-# 2. Average Bill Amount (last 6 months)
-# Captures overall debt burden — replaces 6 correlated columns
+# 2. Average Bill Amount (last 6 months) → Captures overall debt burden — replaces 6 correlated columns
 df['avg_bill_amt'] = df[['BILL_AMT1', 'BILL_AMT2', 'BILL_AMT3',
                           'BILL_AMT4', 'BILL_AMT5', 'BILL_AMT6']].mean(axis=1)
 
@@ -322,10 +318,9 @@ df['avg_pay_amt'] = df[['PAY_AMT1', 'PAY_AMT2', 'PAY_AMT3',
                          'PAY_AMT4', 'PAY_AMT5', 'PAY_AMT6']].mean(axis=1)
 
 # 4. Repayment Ratio
-# If someone owes 10,000 and pays 8,000 → ratio = 0.8 (good)
-# If someone owes 10,000 and pays 1,000 → ratio = 0.1 (risky)
-df['repayment_ratio'] = df['avg_pay_amt'] / (df['avg_bill_amt'] + 1)
-# +1 avoids division by zero
+#If someone owes 10,000 and pays 8,000 → ratio = 0.8 (good)
+#If someone owes 10,000 and pays 1,000 → ratio = 0.1 (risky)
+df['repayment_ratio'] = df['avg_pay_amt'] / (df['avg_bill_amt'] + 1) # +1 avoids division by zero
 
 # 5. Max Delay (worst payment behavior in 6 months)
 df['max_delay'] = df[['PAY_0', 'PAY_2', 'PAY_3',
@@ -335,11 +330,10 @@ df['max_delay'] = df[['PAY_0', 'PAY_2', 'PAY_3',
 pay_cols = ['PAY_0', 'PAY_2', 'PAY_3', 'PAY_4', 'PAY_5', 'PAY_6']
 df['delay_count'] = (df[pay_cols] > 0).sum(axis=1)
 
-# 7. Fix utilization anomalies  ← ADD THIS RIGHT HERE
+# 7. Fixing utilization anomalies 
 df['credit_utilization_ratio'] = df['credit_utilization_ratio'].clip(0, 1)
 
 # Verify all features created
-print("New features created:")
 new_features = ['credit_utilization_ratio', 'avg_bill_amt', 
                 'avg_pay_amt', 'repayment_ratio', 
                 'max_delay', 'delay_count']
@@ -386,7 +380,7 @@ cluster_features = [
 # Extract clustering data
 X_cluster = df[cluster_features].copy()
 
-# Check for any nulls or inf values
+# Check for any nulls or infinity values
 print("Any nulls:", X_cluster.isnull().sum().sum())
 print("Any inf:", np.isinf(X_cluster).sum().sum())
 print("Shape:", X_cluster.shape)
@@ -395,31 +389,22 @@ print("Shape:", X_cluster.shape)
 print("Nulls per column:")
 print(X_cluster.isnull().sum())
 
-# Fix — fill nulls with median of that column
-# Median is better than mean here because 
-# our features are skewed
+# Fix, fill nulls with median of that column. Median is better than mean here because our features are skewed
 X_cluster = X_cluster.fillna(X_cluster.median())
 
 # Verify fix
-print("\nAfter fix:")
 print("Any nulls:", X_cluster.isnull().sum().sum())
 
 # Scale the data
-# KMeans and PCA are both distance-based
-# Without scaling, LIMIT_BAL (167,000) would 
-# completely dominate AGE (35) just because 
-# of magnitude difference
+# KMeans and PCA are both distance-based, without scaling, LIMIT_BAL (167,000) would completely dominate AGE (35) just because of magnitude difference
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X_cluster)
 
 print("Scaled data shape:", X_scaled.shape)
-print("Mean of scaled data (should be ~0):", 
-      X_scaled.mean(axis=0).round(3))
-print("Std of scaled data (should be ~1):", 
-      X_scaled.std(axis=0).round(3))
+print("Mean of scaled data:", X_scaled.mean(axis=0).round(3)) #should be ~0
+print("Std of scaled data (should be ~1):", X_scaled.std(axis=0).round(3))
 
-# First run PCA with all 8 components
-# to see how much variance each explains
+# First run PCA with all 8 components to see how much variance each explains
 pca_full = PCA(n_components=8)
 pca_full.fit(X_scaled)
 
@@ -453,9 +438,8 @@ plt.show()
 
 # Print exact numbers
 print("Variance explained per component:")
-for i, (ind, cum) in enumerate(zip(explained_variance, 
-                                    cumulative_variance)):
-    print(f"PC{i+1}: {ind*100:.2f}%  |  Cumulative: {cum*100:.2f}%")
+for i, (ind, cum) in enumerate(zip(explained_variance, cumulative_variance)):
+  print(f"PC{i+1}: {ind*100:.2f}%  |  Cumulative: {cum*100:.2f}%")
 
 # Apply PCA with 6 components
 pca = PCA(n_components=6)
@@ -465,10 +449,9 @@ print("Original shape:", X_scaled.shape)
 print("After PCA shape:", X_pca.shape)
 print(f"Variance preserved: {pca.explained_variance_ratio_.sum()*100:.2f}%")
 
-# Elbow Method — find best number of clusters
+# Elbow Method - find best number of clusters
 inertia = []
 K_range = range(2, 11)
-
 for k in K_range:
     kmeans = KMeans(n_clusters=k, 
                     random_state=42, 
@@ -521,8 +504,7 @@ plt.legend(markerscale=3)
 plt.tight_layout()
 plt.show()
 
-# Remove extreme outliers using Z-score
-# Any row where ANY feature is more than 3 std devs away
+# Removing extreme outliers using Z-score. Any row where a feature is more than 3 std devs away
 z_scores = np.abs(stats.zscore(X_cluster))
 outlier_mask = (z_scores < 3).all(axis=1)
 
