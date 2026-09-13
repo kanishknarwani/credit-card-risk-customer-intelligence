@@ -538,7 +538,7 @@ print((df_clean['cluster'].value_counts(normalize=True)
 # PREPARE FEATURES AND TARGET
 # =============================================
 
-# Features we'll use for modeling
+# Features used for modeling
 
 # Step 1 - Define features
 model_features = [
@@ -567,7 +567,7 @@ print("NaN count:", X.isnull().sum().sum())
 print("Inf count:", np.isinf(X).sum().sum())
 print("Shape:", X.shape)
 
-# Step 5 - NOW do train test split
+# Step 5 - train test split
 X_train, X_test, y_train, y_test = train_test_split(
     X, y,
     test_size=0.2,
@@ -616,8 +616,6 @@ xgb = XGBClassifier(n_estimators=100,
 xgb.fit(X_train_smote, y_train_smote)
 y_pred_xgb = xgb.predict(X_test)
 y_prob_xgb = xgb.predict_proba(X_test)[:, 1]
-
-print("All 3 models trained successfully!")
 
 # =============================================
 # COMPARISON TABLE
