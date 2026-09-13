@@ -822,10 +822,12 @@ print()
 print(f"Mean difference: {mean_diff:,.2f}")
 print(f"95% CI: ({ci_lower:,.2f}, {ci_upper:,.2f})")
 
-#Interview explanation: Our A/B test showed p-value of 0.42, well above the 0.05 significance threshold. The 95% confidence interval on spend difference was
-#(-2,349 to +983) — containing zero — meaning we cannot conclude the 10% cashback offer drove meaningfully higher spending. This is a realistic outcome — in 
-#practice, cashback offers need to be tested on real experiment data with actual behavioral response, not randomly assigned on historical data. This exercise
-#demonstrated the statistical framework: hypothesis setup, t-test, p-value interpretation, and confidence interval analysis."
+'''
+Finding: Our A/B test showed p-value of 0.42, well above the 0.05 significance threshold. The 95% confidence 
+interval on spend difference was (-2,349 to +983) — containing zero — meaning we cannot conclude the 10% cashback offer drove 
+meaningfully higher spending. This is a realistic outcome — in practice, cashback offers need to be tested on real experiment data
+with actual behavioral response, not randomly assigned on historical data.
+'''
 
 fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
@@ -923,9 +925,7 @@ features_to_check = [
 ]
 
 print("\nPSI Results:")
-print("=" * 45)
 print(f"{'Feature':<25} {'PSI':>8} {'Status':>12}")
-print("=" * 45)
 
 psi_results = {}
 for feature in features_to_check:
@@ -943,8 +943,6 @@ for feature in features_to_check:
         status = "Retrain"
         
     print(f"{feature:<25} {psi:>8.4f} {status:>12}")
-
-print("=" * 45)
 
 # Visualize PSI results
 fig, axes = plt.subplots(1, 2, figsize=(16, 6))
@@ -1073,9 +1071,7 @@ trend_forecast = np.polyval(coeffs, 7)
 avg_growth = ts_df['growth_rate'].dropna().mean() / 100
 growth_forecast = ts_df['avg_spend'].iloc[-1] * (1 + avg_growth)
 
-print("\n" + "=" * 45)
 print("OCTOBER 2005 SPEND FORECAST")
-print("=" * 45)
 print(f"Method 1 - 3-Month Moving Average: "
       f"{ma3_forecast:,.2f}")
 print(f"Method 2 - Linear Trend:           "
