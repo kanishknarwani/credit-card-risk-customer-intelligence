@@ -729,7 +729,7 @@ finding that P(Default | Payment Delayed) = 50% vs baseline of 22%.
 
 EDA found → Payment delay is strongest signal
 Feature Engineering created → max_delay, delay_count
-Model confirmed → max_delay is #1 feature
+Model confirmed → max_delay as #1 feature
 Business insight → Monitor payment behavior, not just spend
 '''
 
@@ -769,7 +769,7 @@ print(f"  Size: {len(treatment_spend)}")
 print(f"  Mean Spend: {treatment_spend.mean():,.2f}")
 print(f"  Std: {treatment_spend.std():,.2f}")
 
-#Interesting — treatment group spent LESS than control.
+#Finding - treatment group spent LESS than control.
 #This is counterintuitive. The hypothesis test will tell us if this difference is statistically significant or just random noise.
 
 # =============================================
@@ -781,9 +781,8 @@ print(f"  Std: {treatment_spend.std():,.2f}")
 
 # Step 1 — Check normality (sample size is large
 # so Central Limit Theorem applies anyway)
-print("=" * 50)
+
 print("HYPOTHESIS TEST — A/B Testing")
-print("=" * 50)
 print("H0: Control mean spend = Treatment mean spend")
 print("H1: Control mean spend ≠ Treatment mean spend")
 print(f"Significance level: α = 0.05")
@@ -793,8 +792,7 @@ print()
 t_stat, p_value = stats.ttest_ind(
     control_spend, 
     treatment_spend,
-    equal_var=False  # Welch's t-test
-    # doesn't assume equal variance
+    equal_var=False  # Welch's t-test doesn't assume equal variance
 )
 
 print(f"T-statistic: {t_stat:.4f}")
